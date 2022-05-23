@@ -8,6 +8,6 @@ namespace BotPlazaVea
 {
     class Program
     {
-        static async Task Main(string[] args) => await new Plantillas().obtenerProductos();
+        static async Task Main(string[] args) => await new Plantillas().obtenerUrls();
     }
 }

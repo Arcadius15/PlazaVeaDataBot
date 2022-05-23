@@ -8,18 +8,18 @@ namespace BotPlazaVea.Clases
 {
     public static class LoggingService
     {
-        public static async Task LogAsync(string mensaje,string svr, Exception exc = null)
+        public static async Task LogAsync(string mensaje,TipoCodigo svr, Exception exc = null)
         {
             
             if (exc != null)
             {
                 await Append(GetSeverity(svr), GetConsoleColor(svr));
-                await Append($" {exc.Message}\n", GetConsoleColor("errorinfo"));
+                await Append($" {exc.Message}\n", GetConsoleColor(TipoCodigo.ERROR_INFO));
             }
             else
             {
                 await Append(GetSeverity(svr), GetConsoleColor(svr));
-                await Append($" {mensaje}\n", GetConsoleColor(svr));
+                await Append($" {mensaje}\n", GetConsoleColor(TipoCodigo.NORMAL));
             }
 
 
@@ -33,41 +33,43 @@ namespace BotPlazaVea.Clases
             });
         }
 
-        public static string GetSeverity(string svr)
+        public static string GetSeverity(TipoCodigo svr)
         {
-            switch (svr.ToLower())
+            switch (svr)
             {
-                case "error":
+                case TipoCodigo.ERROR:
                     return "[ERROR]";
-                case "info":
+                case TipoCodigo.INFO:
                     return "[INFO]";
-                case "warn":
+                case TipoCodigo.WARN:
                     return "[WARN]";
-                case "data":
+                case TipoCodigo.DATA:
                     return "[DATA]";
-                case "head":
+                case TipoCodigo.HEAD:
                     return "[HEADER]";
                 default:
                     return "[DEBUG]";
             }
         }
 
-        private static ConsoleColor GetConsoleColor(string severity)
+        private static ConsoleColor GetConsoleColor(TipoCodigo severity)
         {
-            switch (severity.ToLower())
+            switch (severity)
             {
-                case "error":
+                case TipoCodigo.ERROR:
                     return ConsoleColor.Red;
-                case "warn":
+                case TipoCodigo.WARN:
                     return ConsoleColor.Yellow;
-                case "info":
+                case TipoCodigo.INFO:
                     return ConsoleColor.Green;
-                case "data":
+                case TipoCodigo.DATA:
                     return ConsoleColor.Blue;
-                case "head":
+                case TipoCodigo.HEAD:
                     return ConsoleColor.Magenta;
-                case "errorinfo":
+                case TipoCodigo.ERROR_INFO:
                     return ConsoleColor.DarkRed;
+                case TipoCodigo.NORMAL:
+                    return ConsoleColor.Gray;
                 default: return ConsoleColor.White;
             }
         }

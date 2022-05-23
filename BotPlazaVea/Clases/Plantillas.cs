@@ -12,39 +12,38 @@ namespace BotPlazaVea.Clases
     {
 
         string url = "https://www.plazavea.com.pe/";
-        string brave = @"C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe";
 
         private static List<string> categorias = new List<string>
         {
             "muebles","tecnologia","calzado","deportes"
         };
 
-        public async Task obtenerProductos()
-        {
-            using var browserFetcher = new BrowserFetcher();
-            await browserFetcher.DownloadAsync();
+        List<string> Urls = new List<string>();
 
-            await using var browser = await Puppeteer.LaunchAsync(new LaunchOptions
-            {
-                Headless = true,
-                ExecutablePath = brave,
-                Timeout = 3000000,
-                LogProcess = true
-            });
+
+        public async Task obtenerUrls()
+        {
+            await LoggingService.LogAsync("Cargando Browser...", TipoCodigo.INFO);
+
+            await using var browser = await Browser.getBrowser();
+
+            await LoggingService.LogAsync("Browser Cargado", TipoCodigo.INFO);
 
             await using var page = await browser.NewPageAsync();
 
             int pagina = 0;
+            int cantidad_productos = 0;
             foreach (var cat in categorias)
             {
-                await page.GoToAsync(url+ cat);
+                await LoggingService.LogAsync("Abriendo Pagina...", TipoCodigo.INFO);
 
-                var waiting =await  page.WaitForSelectorAsync(".pagination__item.page-number");
+                await page.GoToAsync(url + cat);
 
-                if (waiting!=null)
+                var waiting = await page.WaitForSelectorAsync(".pagination__item.page-number");
+
+                if (waiting != null)
                 {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("[Pagina Cargada]");
+                    await LoggingService.LogAsync($"Pagina {url+cat} cargada correctamente", TipoCodigo.WARN);
                 }
 
                 var paginaRes = await page.EvaluateFunctionAsync("()=>{" +
@@ -55,13 +54,18 @@ namespace BotPlazaVea.Clases
                     "return res.slice(-1)[0];" +
                     "}");
 
-                pagina= int.Parse(paginaRes.ToString());
+                pagina = int.Parse(paginaRes.ToString());
 
-                
+                await LoggingService.LogAsync($"{pagina} paginas encontradas", TipoCodigo.WARN);
 
                 for (int i = 1; i <= pagina; i++)
                 {
+                    if (cantidad_productos == 80)
+                    {
+                        break;
+                    }
                     await page.GoToAsync(url + cat + $"?page={i}");
+                    await LoggingService.LogAsync("Categoria " + cat + "\n \t" + $"Pagina {i} de {pagina}", TipoCodigo.INFO);
                     await page.WaitForSelectorAsync(".ShowcaseGrid");
                     try
                     {
@@ -74,35 +78,109 @@ namespace BotPlazaVea.Clases
                     }
                     catch (Exception ex)
                     {
-                        await LoggingService.LogAsync("", "error", ex);
+                        await LoggingService.LogAsync("Error encontrado: ", TipoCodigo.ERROR, ex);
                     }
-                    
                     try
                     {
                         var result = await page.EvaluateFunctionAsync("()=>{" +
-                            "const b = [];" +
-                            "document.querySelectorAll('.ShowcaseGrid')[2].childNodes[1].childNodes.forEach(x => " +
-                            "b.push(x.childNodes[0].childNodes[1].childNodes[1].childNodes[0].href));" +
-                            "return b;" +
-                            "}");
+                                                    "const b = [];" +
+                                                    "document.querySelectorAll('.ShowcaseGrid')[2].childNodes[1].childNodes.forEach(x => " +
+                                                    "b.push(x.childNodes[0].childNodes[1].childNodes[1].childNodes[0].href));" +
+                                                    "return b;" +
+                                                    "}");
                         foreach (var item in result)
                         {
-                            await LoggingService.LogAsync("Url Obtenido","head");
-                            await LoggingService.LogAsync(item.ToString(), "data");
-                            //await using var pag = await browser.NewPageAsync();
-                            //await pag.GoToAsync(item.ToString());
-                            //await pag.CloseAsync();
-
+                            if (cantidad_productos == 80)
+                            {
+                                break;
+                            }
+                            await LoggingService.LogAsync("Url Obtenido", TipoCodigo.HEAD);
+                            await LoggingService.LogAsync(item.ToString(), TipoCodigo.DATA);
+                            Urls.Add(item.ToString());
+                            cantidad_productos++;
                         }
                     }
                     catch (Exception ex)
                     {
-                        await LoggingService.LogAsync("", "error",ex);
+                        await LoggingService.LogAsync("Error encontrado: ", TipoCodigo.ERROR, ex);
                     }
+                    
                 }
-
-            }
-            
+                cantidad_productos = 0;
+             }
+            await browser.CloseAsync();
+            await LoggingService.LogAsync($"Proceso terminado. Se encontraron {Urls.Count} productos.", TipoCodigo.INFO);
+            await LoggingService.LogAsync("Iniciando extraccion de data.", TipoCodigo.WARN);
+            await obtenerProductos(Urls);
+            await LoggingService.LogAsync($"Proceso terminado.", TipoCodigo.INFO);
         }
+
+
+        public async Task obtenerProductos(List<string> urls)
+        {
+            await LoggingService.LogAsync("Cargando Browser...", TipoCodigo.INFO);
+
+            await using var browser = await Browser.getBrowser();
+
+            await LoggingService.LogAsync("Browser Cargado", TipoCodigo.INFO);
+
+            await using var page = await browser.NewPageAsync();
+
+            foreach (var uri in urls)
+            {
+                await LoggingService.LogAsync("Abriendo Pagina...", TipoCodigo.INFO);
+
+                await page.GoToAsync(uri);
+
+                await page.WaitForSelectorAsync(".bread-crumb");
+
+                await LoggingService.LogAsync($"Pagina {uri} cargada correctamente", TipoCodigo.WARN);
+                try
+                {
+                    var info = await page.EvaluateFunctionAsync<Producto>("()=>{" +
+                    "const categoria = document.querySelectorAll('.bread-crumb')[0].children[0].children[0].children[0].innerText;" +
+                    "const subcat = document.querySelectorAll('.bread-crumb')[0].children[0].children[1].children[0].children[0].innerText;" +
+                    "const tipo = document.querySelectorAll('.bread-crumb')[0].children[0].children[2].children[0].children[0].innerText;" +
+                    "const subti = document.querySelectorAll('.bread-crumb')[0].children[0].children[3].children[0].children[0].innerText;" +
+                    "const nompro = document.querySelectorAll('.productName')[0].innerText;" +
+                    "const precior = document.querySelectorAll('.ProductCard__content__price')[0].innerText.split(' ')[1];" +
+                    "const precioo = document.querySelectorAll('.ProductCard__content__price')[1].innerText.split(' ')[1];" +
+                    "const iurl = document.querySelectorAll('#image')[0].children[0].children[0].src;" +
+                    "const url = window.location.href;" +
+                    "let producto = {" +
+                    "   'nombreProducto' : nompro," +
+                    "   'precioReg' : precior," +
+                    "   'precioOferta' : precioo," +
+                    "   'proveedor' : 'Diego'," +
+                    "   'categoria' : categoria," +
+                    "   'subcategoria' : subcat," +
+                    "   'tipo' : tipo," +
+                    "   'subtipo' : subti," +
+                    "   'url' : url," +
+                    "   'imagenUrl' : iurl" +
+                    "};" +
+                    "return producto;" +
+                    "}");
+                    await LoggingService.LogAsync(" Producto Obtenido", TipoCodigo.HEAD);
+                    await LoggingService.LogAsync("\n" + info.nombreProducto + "\n" +
+                        info.precioOferta + "\n" +
+                        info.precioReg + "\n" +
+                        info.imagenUrl + "\n" +
+                        info.categoria + "\n" +
+                        info.subcategoria + "\n" +
+                        info.tipo + "\n" +
+                        info.subtipo,
+                        TipoCodigo.DATA);
+                }
+                catch (Exception ex)
+                {
+                    await LoggingService.LogAsync($"Error encontrado en URL: {uri}", TipoCodigo.WARN);
+                    await LoggingService.LogAsync($" {ex.Message}", TipoCodigo.ERROR_INFO);
+                }
+            }
+
+
+        }
+
     }
 }

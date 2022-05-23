@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Proyectos Propios\\Console\\BotPlazaVea\\BotPlazaVea\\BotPlazaVea.csproj": {}
+    "E:\\Github\\Repositorios\\PlazaVeaDataBot\\BotPlazaVea\\BotPlazaVea.csproj": {}
   },
   "projects": {
-    "E:\\Proyectos Propios\\Console\\BotPlazaVea\\BotPlazaVea\\BotPlazaVea.csproj": {
+    "E:\\Github\\Repositorios\\PlazaVeaDataBot\\BotPlazaVea\\BotPlazaVea.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Proyectos Propios\\Console\\BotPlazaVea\\BotPlazaVea\\BotPlazaVea.csproj",
+        "projectUniqueName": "E:\\Github\\Repositorios\\PlazaVeaDataBot\\BotPlazaVea\\BotPlazaVea.csproj",
         "projectName": "BotPlazaVea",
-        "projectPath": "E:\\Proyectos Propios\\Console\\BotPlazaVea\\BotPlazaVea\\BotPlazaVea.csproj",
+        "projectPath": "E:\\Github\\Repositorios\\PlazaVeaDataBot\\BotPlazaVea\\BotPlazaVea.csproj",
         "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "E:\\Proyectos Propios\\Console\\BotPlazaVea\\BotPlazaVea\\obj\\",
+        "outputPath": "E:\\Github\\Repositorios\\PlazaVeaDataBot\\BotPlazaVea\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
@@ -46,9 +46,27 @@
         "net5.0": {
           "targetAlias": "net5.0",
           "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[5.0.17, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[5.0.17, )"
+            },
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
+              "target": "Package",
+              "version": "[5.0.10, )"
+            },
             "PuppeteerSharp": {
               "target": "Package",
               "version": "[7.0.0, )"
+            },
+            "Z.EntityFramework.Extensions.EFCore": {
+              "target": "Package",
+              "version": "[5.13.20, )"
             }
           },
           "imports": [
