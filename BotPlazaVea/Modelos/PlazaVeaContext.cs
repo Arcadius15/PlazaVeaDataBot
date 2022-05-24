@@ -15,13 +15,31 @@ namespace BotPlazaVea.Modelos
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.UseIdentityColumns();
+
             modelBuilder.Entity<Urls>()
                 .HasOne(a => a.Producto)
                 .WithOne(b => b.Url)
-                .HasForeignKey<Productos>(b => b.idUrl);
+                .HasForeignKey<Productos>(b => b.idUrl)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_URL_1");
+
+            modelBuilder.Entity<Urls>()
+                .HasIndex(x => x.url)
+                .IsUnique();
+
+            modelBuilder.Entity<Urls>()
+                .Property(p => p.id)
+                .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<Productos>()
+                .Property(p => p.id)
+                .ValueGeneratedOnAdd();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-            => optionsBuilder.UseNpgsql("Host=localhost:5432;Database=PlazaVeaData;Username=postgres;Password=admin");
+         
+            => optionsBuilder.UseNpgsql(@"Host=localhost;Database=PlazaVeaData;Username=postgres;Password=admin");
+        
     }
 }

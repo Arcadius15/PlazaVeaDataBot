@@ -62,7 +62,6 @@ E:\Github\Repositorios\PlazaVeaDataBot\BotPlazaVea\bin\Debug\net5.0\System.Drawi
 E:\Github\Repositorios\PlazaVeaDataBot\BotPlazaVea\bin\Debug\net5.0\System.Security.Cryptography.ProtectedData.dll
 E:\Github\Repositorios\PlazaVeaDataBot\BotPlazaVea\bin\Debug\net5.0\System.Security.Permissions.dll
 E:\Github\Repositorios\PlazaVeaDataBot\BotPlazaVea\bin\Debug\net5.0\System.Windows.Extensions.dll
-E:\Github\Repositorios\PlazaVeaDataBot\BotPlazaVea\bin\Debug\net5.0\Z.EntityFramework.Extensions.EFCore.dll
 E:\Github\Repositorios\PlazaVeaDataBot\BotPlazaVea\bin\Debug\net5.0\runtimes\win\lib\netcoreapp3.0\Microsoft.Win32.SystemEvents.dll
 E:\Github\Repositorios\PlazaVeaDataBot\BotPlazaVea\bin\Debug\net5.0\runtimes\unix\lib\netcoreapp3.0\System.Drawing.Common.dll
 E:\Github\Repositorios\PlazaVeaDataBot\BotPlazaVea\bin\Debug\net5.0\runtimes\win\lib\netcoreapp3.0\System.Drawing.Common.dll
@@ -78,3 +77,4 @@ E:\Github\Repositorios\PlazaVeaDataBot\BotPlazaVea\obj\Debug\net5.0\BotPlazaVea.
 E:\Github\Repositorios\PlazaVeaDataBot\BotPlazaVea\obj\Debug\net5.0\ref\BotPlazaVea.dll
 E:\Github\Repositorios\PlazaVeaDataBot\BotPlazaVea\obj\Debug\net5.0\BotPlazaVea.pdb
 E:\Github\Repositorios\PlazaVeaDataBot\BotPlazaVea\obj\Debug\net5.0\BotPlazaVea.genruntimeconfig.cache
+E:\Github\Repositorios\PlazaVeaDataBot\BotPlazaVea\bin\Debug\net5.0\Z.EntityFramework.Extensions.EFCore.dll

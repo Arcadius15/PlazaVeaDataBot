@@ -60,7 +60,7 @@ namespace BotPlazaVea.Clases
 
                 for (int i = 1; i <= pagina; i++)
                 {
-                    if (cantidad_productos == 80)
+                    if (cantidad_productos == 1)
                     {
                         break;
                     }
@@ -90,7 +90,7 @@ namespace BotPlazaVea.Clases
                                                     "}");
                         foreach (var item in result)
                         {
-                            if (cantidad_productos == 80)
+                            if (cantidad_productos == 1)
                             {
                                 break;
                             }
@@ -111,12 +111,14 @@ namespace BotPlazaVea.Clases
             await browser.CloseAsync();
             await LoggingService.LogAsync($"Proceso terminado. Se encontraron {Urls.Count} productos.", TipoCodigo.INFO);
             await LoggingService.LogAsync("Iniciando extraccion de data.", TipoCodigo.WARN);
-            await obtenerProductos(Urls);
+            List<Producto> lista =  await obtenerProductos(Urls);
+            Import import = new Import();
+            await import.guardarProducto(lista);
             await LoggingService.LogAsync($"Proceso terminado.", TipoCodigo.INFO);
         }
 
 
-        public async Task obtenerProductos(List<string> urls)
+        public async Task<List<Producto>> obtenerProductos(List<string> urls)
         {
             await LoggingService.LogAsync("Cargando Browser...", TipoCodigo.INFO);
 
@@ -126,6 +128,8 @@ namespace BotPlazaVea.Clases
 
             await using var page = await browser.NewPageAsync();
 
+
+            List<Producto> listado = new();
             foreach (var uri in urls)
             {
                 await LoggingService.LogAsync("Abriendo Pagina...", TipoCodigo.INFO);
@@ -171,6 +175,9 @@ namespace BotPlazaVea.Clases
                         info.tipo + "\n" +
                         info.subtipo,
                         TipoCodigo.DATA);
+                    listado.Add(info);
+
+
                 }
                 catch (Exception ex)
                 {
@@ -178,7 +185,7 @@ namespace BotPlazaVea.Clases
                     await LoggingService.LogAsync($" {ex.Message}", TipoCodigo.ERROR_INFO);
                 }
             }
-
+            return listado;
 
         }
 

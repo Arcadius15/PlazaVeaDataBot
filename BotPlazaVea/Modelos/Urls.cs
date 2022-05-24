@@ -13,9 +13,9 @@ namespace BotPlazaVea.Modelos
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int id { get; set; }
-        [Required]
         public string url { get; set; }
 
-        public Productos Producto { get; set; }
+
+        public virtual Productos Producto { get; set; }
     }
 }
