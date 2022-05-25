@@ -13,10 +13,15 @@ namespace BotPlazaVea.Clases
 
         string url = "https://www.plazavea.com.pe/";
 
+        //private static List<string> categorias = new List<string>
+        //{
+        //    "muebles","tecnologia","calzado","deportes","carnes-aves-y-pescados","packs","abarrotes","bebidas","limpieza"
+        //    ,"panaderia-y-pasteleria","frutas-y-verduras","moda","libreria-y-oficina"
+        //};
+
         private static List<string> categorias = new List<string>
         {
-            "muebles","tecnologia","calzado","deportes","carnes-aves-y-pescados","packs","abarrotes","bebidas","limpieza"
-            ,"panaderia-y-pasteleria","frutas-y-verduras","moda","libreria-y-oficina"
+            "packs"
         };
 
         List<string> Urls = new List<string>();
@@ -106,7 +111,7 @@ namespace BotPlazaVea.Clases
                             }
                             else
                             {
-                                throw new Exception($"Url no encontrado en pagina {i} en la fila {item}");
+                                await LoggingService.LogAsync($"Url no encontrado en pagina {i} en la fila {item.Path} de categoria {cat}", TipoCodigo.ERROR);
                             }
                             
                         }

@@ -21,7 +21,7 @@ namespace BotPlazaVea.Clases
                 await Append($" {mensaje + exc.Message}\n", GetConsoleColor(TipoCodigo.ERROR_INFO));
                 await WriteToFile(exc.Message);
             }
-            if (svr.Equals(TipoCodigo.LOG))
+            else if (svr.Equals(TipoCodigo.LOG))
             {
                 await Append(GetSeverity(svr), GetConsoleColor(svr));
                 await Append($" Creando {mensaje}...\n", GetConsoleColor(TipoCodigo.NORMAL));
