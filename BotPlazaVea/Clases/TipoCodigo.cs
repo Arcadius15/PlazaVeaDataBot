@@ -14,6 +14,7 @@ namespace BotPlazaVea.Clases
         DATA,
         HEAD,
         ERROR_INFO,
-        NORMAL
+        NORMAL,
+        LOG
     }
 }

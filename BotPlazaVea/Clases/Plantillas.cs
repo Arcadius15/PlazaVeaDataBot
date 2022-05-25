@@ -15,7 +15,8 @@ namespace BotPlazaVea.Clases
 
         private static List<string> categorias = new List<string>
         {
-            "muebles","tecnologia","calzado","deportes"
+            "muebles","tecnologia","calzado","deportes","carnes-aves-y-pescados","packs","abarrotes","bebidas","limpieza"
+            ,"panaderia-y-pasteleria","frutas-y-verduras","moda","libreria-y-oficina"
         };
 
         List<string> Urls = new List<string>();
@@ -60,7 +61,7 @@ namespace BotPlazaVea.Clases
 
                 for (int i = 1; i <= pagina; i++)
                 {
-                    if (cantidad_productos == 1)
+                    if (cantidad_productos == 200)
                     {
                         break;
                     }
@@ -90,19 +91,27 @@ namespace BotPlazaVea.Clases
                                                     "}");
                         foreach (var item in result)
                         {
-                            if (cantidad_productos == 1)
+                            if (cantidad_productos == 200)
                             {
                                 break;
                             }
-                            await LoggingService.LogAsync("Url Obtenido", TipoCodigo.HEAD);
-                            await LoggingService.LogAsync(item.ToString(), TipoCodigo.DATA);
-                            Urls.Add(item.ToString());
-                            cantidad_productos++;
+                            if (!String.IsNullOrEmpty(item.ToString().Trim()))
+                            {
+                                await LoggingService.LogAsync("Url Obtenido", TipoCodigo.HEAD);
+                                await LoggingService.LogAsync(item.ToString(), TipoCodigo.DATA);
+                                Urls.Add(item.ToString());
+                                cantidad_productos++;
+                            }
+                            else
+                            {
+                                throw new Exception("Url no encontrado");
+                            }
+                            
                         }
                     }
                     catch (Exception ex)
                     {
-                        await LoggingService.LogAsync("Error encontrado: ", TipoCodigo.ERROR, ex);
+                        await LoggingService.LogAsync($"Error encontrado: ", TipoCodigo.ERROR, ex);
                     }
                     
                 }
@@ -131,16 +140,16 @@ namespace BotPlazaVea.Clases
 
             List<Producto> listado = new();
             foreach (var uri in urls)
-            {
-                await LoggingService.LogAsync("Abriendo Pagina...", TipoCodigo.INFO);
-
-                await page.GoToAsync(uri);
-
-                await page.WaitForSelectorAsync(".bread-crumb");
-
-                await LoggingService.LogAsync($"Pagina {uri} cargada correctamente", TipoCodigo.WARN);
+            { 
                 try
                 {
+                    await LoggingService.LogAsync("Abriendo Pagina...", TipoCodigo.INFO);
+
+                    await page.GoToAsync(uri);
+
+                    await page.WaitForSelectorAsync(".bread-crumb");
+
+                    await LoggingService.LogAsync($"Pagina {uri} cargada correctamente", TipoCodigo.WARN);
                     var info = await page.EvaluateFunctionAsync<Producto>("()=>{" +
                     "const categoria = document.querySelectorAll('.bread-crumb')[0].children[0].children[0].children[0].innerText;" +
                     "const subcat = document.querySelectorAll('.bread-crumb')[0].children[0].children[1].children[0].children[0].innerText;" +

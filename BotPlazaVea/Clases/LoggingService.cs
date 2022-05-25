@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,13 +9,23 @@ namespace BotPlazaVea.Clases
 {
     public static class LoggingService
     {
+
+        private static readonly string path = AppDomain.CurrentDomain.BaseDirectory + "\\Logs";
+
         public static async Task LogAsync(string mensaje,TipoCodigo svr, Exception exc = null)
         {
             
             if (exc != null)
             {
                 await Append(GetSeverity(svr), GetConsoleColor(svr));
-                await Append($" {exc.Message}\n", GetConsoleColor(TipoCodigo.ERROR_INFO));
+                await Append($" {mensaje + exc.Message}\n", GetConsoleColor(TipoCodigo.ERROR_INFO));
+                await WriteToFile(exc.Message);
+            }
+            if (svr.Equals(TipoCodigo.LOG))
+            {
+                await Append(GetSeverity(svr),GetConsoleColor(svr));
+                await Append($" Log Creado.\n", GetConsoleColor(svr));
+                await DeleteFile();
             }
             else
             {
@@ -73,5 +84,49 @@ namespace BotPlazaVea.Clases
                 default: return ConsoleColor.White;
             }
         }
+
+        private static async Task WriteToFile(string Message)
+        {
+            await Task.Run(async()=> {
+                string filepath = AppDomain.CurrentDomain.BaseDirectory + "\\Logs\\ServiceLog_" + DateTime.Now.Date.ToShortDateString().Replace('/', '_') + ".txt";
+                
+                await CreateFile();
+                
+                using (StreamWriter sw = File.AppendText(filepath))
+                {
+                    sw.WriteLine(Message);
+                }
+                
+            });
+            
+        }
+
+        private static async Task CreateFile()
+        {
+            await Task.Run(()=> {
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+            });
+        }
+
+       private static async Task DeleteFile()
+       {
+            await Task.Run(()=> {
+                if (Directory.Exists(path))
+                {
+                    DirectoryInfo di = new DirectoryInfo(path);
+                    FileInfo[] files = di.GetFiles();
+                    foreach (FileInfo file in files)
+                    {
+                        file.Delete();
+                    }
+                }
+                
+            });
+        }
+
+
     }
 }
