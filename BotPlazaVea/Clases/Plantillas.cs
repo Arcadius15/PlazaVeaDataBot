@@ -13,16 +13,16 @@ namespace BotPlazaVea.Clases
 
         string url = "https://www.plazavea.com.pe/";
 
-        //private static List<string> categorias = new List<string>
-        //{
-        //    "muebles","tecnologia","calzado","deportes","carnes-aves-y-pescados","packs","abarrotes","bebidas","limpieza"
-        //    ,"panaderia-y-pasteleria","frutas-y-verduras","moda","libreria-y-oficina"
-        //};
-
         private static List<string> categorias = new List<string>
         {
-            "packs"
+            "muebles","tecnologia","calzado","deportes","carnes-aves-y-pescados","packs","abarrotes","bebidas","limpieza"
+            ,"panaderia-y-pasteleria","frutas-y-verduras","moda","libreria-y-oficina"
         };
+
+        //private static List<string> categorias = new List<string>
+        //{
+        //    "packs"
+        //};
 
         List<string> Urls = new List<string>();
 
@@ -92,10 +92,15 @@ namespace BotPlazaVea.Clases
                     {
                         var result = await page.EvaluateFunctionAsync("()=>{" +
                                                     "const b = [];" +
-                                                    "document.querySelectorAll('.ShowcaseGrid')[2].childNodes[1].childNodes.forEach(x => " +
-                                                    "b.push(x.childNodes[0].childNodes[1].childNodes[1].childNodes[0].href));" +
-                                                    "return b;" +
-                                                    "}");
+                                                    "document.querySelectorAll('.ShowcaseGrid')[2].childNodes[1].childNodes.forEach(x => {" +
+                                                    "   const res = x.childNodes[0].childNodes[1].childNodes[1].childNodes[0].className;" +
+                                                    "   if(res.toString()=='Showcase__photo'){ " +
+                                                    "       b.push(x.childNodes[0].childNodes[1].childNodes[1].href);" +
+                                                    "   }else{" +
+                                                    "       b.push(x.childNodes[0].childNodes[1].childNodes[1].childNodes[0].href);" +
+                                                    "   };" +
+                                                    "});" +
+                                                    "return b;}");
                         foreach (var item in result)
                         {
                             if (cantidad_productos == 200)
@@ -104,7 +109,7 @@ namespace BotPlazaVea.Clases
                             }
                             if (!String.IsNullOrEmpty(item.ToString().Trim()))
                             {
-                                await LoggingService.LogAsync("Url Obtenido", TipoCodigo.HEAD);
+                                await LoggingService.LogAsync($"Url {item.Path} de pagina {i} Obtenido", TipoCodigo.HEAD);
                                 await LoggingService.LogAsync(item.ToString(), TipoCodigo.DATA);
                                 Urls.Add(item.ToString());
                                 cantidad_productos++;
