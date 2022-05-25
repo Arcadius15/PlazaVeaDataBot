@@ -23,9 +23,13 @@ namespace BotPlazaVea.Clases
             }
             if (svr.Equals(TipoCodigo.LOG))
             {
-                await Append(GetSeverity(svr),GetConsoleColor(svr));
-                await Append($" Log Creado.\n", GetConsoleColor(svr));
+                await Append(GetSeverity(svr), GetConsoleColor(svr));
+                await Append($" Creando {mensaje}...\n", GetConsoleColor(TipoCodigo.NORMAL));
                 await DeleteFile();
+                await CreateFile();
+                await Append(GetSeverity(svr), GetConsoleColor(svr));
+                await Append($" {mensaje} creado\n", GetConsoleColor(TipoCodigo.NORMAL));
+
             }
             else
             {
@@ -81,16 +85,17 @@ namespace BotPlazaVea.Clases
                     return ConsoleColor.DarkRed;
                 case TipoCodigo.NORMAL:
                     return ConsoleColor.Gray;
+                case TipoCodigo.LOG:
+                    return ConsoleColor.DarkMagenta;
                 default: return ConsoleColor.White;
             }
         }
 
         private static async Task WriteToFile(string Message)
         {
-            await Task.Run(async()=> {
+            await Task.Run(()=> {
                 string filepath = AppDomain.CurrentDomain.BaseDirectory + "\\Logs\\ServiceLog_" + DateTime.Now.Date.ToShortDateString().Replace('/', '_') + ".txt";
                 
-                await CreateFile();
                 
                 using (StreamWriter sw = File.AppendText(filepath))
                 {

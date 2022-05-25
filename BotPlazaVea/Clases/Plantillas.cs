@@ -30,6 +30,8 @@ namespace BotPlazaVea.Clases
 
             await LoggingService.LogAsync("Browser Cargado", TipoCodigo.INFO);
 
+            await LoggingService.LogAsync("Log", TipoCodigo.LOG);
+
             await using var page = await browser.NewPageAsync();
 
             int pagina = 0;
@@ -104,7 +106,7 @@ namespace BotPlazaVea.Clases
                             }
                             else
                             {
-                                throw new Exception("Url no encontrado");
+                                throw new Exception($"Url no encontrado en pagina {i} en la fila {item}");
                             }
                             
                         }
